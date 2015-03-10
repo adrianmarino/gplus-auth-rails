@@ -1,0 +1,75 @@
+<script type="text/javascript">
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/client:plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+
+  function signinCallback(authResult) {
+    var token = gapi.auth.getToken();
+    var accessToken = token.access_token;
+    debugger;
+    console.log(authResult);
+
+    if (authResult['access_token']) {
+      var accessUrl = 'https://www.googleapis.com/plus/v1/people/me?access_token=' + accessToken;
+      $.ajax({
+        type: 'GET',
+        url: accessUrl,
+        async: false,
+        contentType: 'application/json',
+        dataType: 'jsonp',
+        success: function(data) {
+          $('#name').val(data.displayName);
+          $('#gplus').val(data.id);
+          $('#email').val(data.emails[0].value);
+          $('#data').val(JSON.stringify(data));
+          data.emails[0].value
+          document.getElementById('sign_in_form').submit();
+        },
+        error: function(an_error) { console.log(an_error); }
+      });
+    } else if (authResult['error']) {
+      $('.is-this-you').html("<h4>Your request could not be completed at this time</h4>");
+    };
+  }
+
+  function logout() {
+      gapi.auth.signOut();
+      location.reload();
+  }
+</script>
+
+
+<div class="container">
+  <br />
+  <% if flash[:notice]%>
+    <div class="alert alert-success" role="alert">
+      <%=h flash[:notice]%>
+    </div>
+  <% end %>
+
+  <div class="panel panel-primary">
+    <div class="panel-heading">Session</div>
+    <div class="panel-body">
+      <span class="g-signin"
+            data-callback="signinCallback"
+            data-clientid="514663904118-ohmcncqtog4udh4kl15fiol5euj4784p.apps.googleusercontent.com"
+            data-cookiepolicy="single_host_origin",
+            data-approvalprompt='force',
+            data-hd="restorando.com",
+            data-requestvisibleactions="http://schemas.google.com/AddActivity"
+            data-scope="https://www.googleapis.com/auth/plus.profile.emails.read">
+      </span>
+      <br />
+      <input type="button" class="btn btn-default" value="Sign Out" onclick="logout()" />
+    </div>
+  </div>
+
+  <%= form_tag("/sign_in", :id => 'sign_in_form', :method => "post") do %>
+    <%= hidden_field_tag :name %>
+    <%= hidden_field_tag :gplus %>
+    <%= hidden_field_tag :email %>
+    <%= hidden_field_tag :data %>
+  <% end %>
+</div>

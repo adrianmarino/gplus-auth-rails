@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Googole Plus</title>
+  </head>
+  <script type="text/javascript">
+    (function() {
+      var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+      po.src = 'https://apis.google.com/js/client:plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+    })();
+
+    function signinCallback(authResult) {
+      if (authResult['access_token']) {
+        document.getElementById('signinButton').setAttribute('style', 'display: none');
+        console.log('Start Session!!!');
+      } else {
+        console.log('Sign-in failed: ' + authResult['error']);
+        console.log(authResult);
+      }
+    }
+
+    function logout() {
+        gapi.auth.signOut();
+        location.reload();
+    }
+  </script>
+  <body>
+    <center>
+      <span id="signinButton">
+      <br />
+      <br />
+      <br />
+      <span
+        class="g-signin"
+        data-callback="signinCallback"
+        data-clientid="514663904118-ohmcncqtog4udh4kl15fiol5euj4784p.apps.googleusercontent.com"
+        data-cookiepolicy="single_host_origin",
+        data-approvalprompt='force',
+        data-requestvisibleactions="http://schemas.google.com/AddActivity"
+        data-scope="https://www.googleapis.com/auth/plus.profile.emails.read">
+      </span>
+      </span>
+      <br />
+      <input type="button"  value="Sign Out" onclick="logout()" />
+    </center>
+  </body>
+</html>
+
